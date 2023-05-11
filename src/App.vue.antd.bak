@@ -1,0 +1,101 @@
+<script>
+import Introduction from './components/steps/Introduction.vue'
+import AvisDeDeces from './components/steps/AvisDeDeces.vue'
+import Musique from './components/steps/Musique.vue'
+import Traiteur from './components/steps/Traiteur.vue'
+import Signets from './components/steps/Signets.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Introduction,
+    AvisDeDeces,
+    Musique,
+    Traiteur,
+    Signets,
+  },
+  data() {
+    return {
+      current: 0,
+      formData: null,
+      data: {},
+      steps: [
+        { title: "Introduction", component: Introduction },
+        { title: "Avis de décès", component: AvisDeDeces },
+        { title: "Musique", component: Musique },
+        { title: "Traiteur", component: Traiteur },
+        { title: "Signets", component: Signets }
+      ]
+    };
+  },
+  created() {
+    fetch('https://girardot.duboisda.com/wp-admin/admin-ajax.php?action=data_espace_famille')
+      .then(response => response.json())
+      .then(({data}) => {
+        this.formData = data;
+      });
+  },
+  methods: {
+    next() {
+      console.log(this.data);
+      this.current += 1;
+    },
+
+    prev() {
+      this.current -= 1;
+    },
+
+    getStatus(index) {
+      const step = this.steps[index];
+
+      if (step.isValid === false) {
+        return "error";
+      } else if (this.current === index) {
+        return "process";
+      } else {
+        return "wait";
+      }
+    },
+
+    submitForm() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.$message.success('Submit successfully');
+        } else {
+          this.$message.error('Fail to submit');
+        }
+      });
+    },
+    async submit() {
+      await new Promise(r => setTimeout(r, 1000));
+      alert('Submitted! 🎉');
+    },
+  },
+};
+</script>
+
+<template>
+  <a-form :model="data" layout="vertical" :hide-required-mark="true" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+    <a-steps :current="current" progress-dot>
+      <a-step v-for="(item, index) in steps" :key="index" :title="item.title" :status="getStatus(index)" @click="current = index" />
+    </a-steps>
+    <a-card>
+    <template v-for="(item, index) in steps" :key="index">
+      <component v-if="current === index" :is="item.component" :formData="formData" :data="data" />
+    </template>
+    <template #actions>
+      <a-button v-if="current > 0" @click="prev()">Étape précédente</a-button>
+      <a-button v-if="current < steps.length - 1" type="primary" @click="next()">
+        {{current === 0 ? 'Commencer' : 'Continuer'}}
+      </a-button>
+      <a-button v-if="current === steps.length - 1" type="primary" html-type="submit" @click.prevent="submitForm()">
+        Terminer
+      </a-button>
+    </template>
+    </a-card>
+  </a-form>
+</template>
+
+<style scoped>
+</style>
+

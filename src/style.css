@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-gold: #a98350;
+    --color-white: #ffffff;
+  }
+  body{
+    --multistep-color-success: var(--color-gold);
+  }
+}
+
+body::before{
+  display: none !important;
+}
+
+.form-step .ant-form-item{
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.form-step .ant-form-item-label{
+  text-align: left;
+}
+
+.choixSignet .formkit-step-actions{
+  display: none;
+}
+
+.reliquaire .formkit-outer{
+  --fk-margin-outer: 0;
+}
+
+.reliquaire .formkit-wrapper{
+  color: var(--color-white);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  --fk-padding-label: 0px;
+}
+
+.reliquaire .formkit-wrapper .formkit-inner{
+  background-color: var(--color-white);
+  max-width: 60px;
+}
+
+.piece-preview{
+  display: flex;
+  justify-content: flex-end;
+  font-size: var(--fk-font-size-help);
+  position: relative;
+  top: calc(-1 * var(--fk-margin-outer-b));
+}
+
+.formkit-options{
+  display: flex;
+  gap:10px;
+}

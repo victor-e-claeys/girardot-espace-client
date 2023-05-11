@@ -22,6 +22,6 @@ export default defineConfig({
     },
   },
   build: {
-    cssCodeSplit: true,
+    cssCodeSplit: true
   },
 })

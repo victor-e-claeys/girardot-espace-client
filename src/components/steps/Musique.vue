@@ -15,7 +15,6 @@
           hommage: 'Court hommage au salon (2 chansons)',
           chapelle: 'Célébrant en chapelle (3 chansons)'
         }"
-        @change="log"
         validation="required"
       />
       <div v-if="ceremonie">
@@ -31,15 +30,15 @@
           v-model="musiques"
           type="list"
         >
-          <table class="border-separate border-spacing-3">
-            <tr>
-              <th>Moment</th>
-              <th>Pièce Musicale</th>
-            </tr>
+          <div class="border-separate sm:border-spacing-3 sm:table pt-3 sm:pt-0">
+            <div class="hidden sm:table-row font-bold">
+              <div class="table-cell">Moment</div>
+              <div class="table-cell">Pièce Musicale</div>
+            </div>
             <template v-for="({name}, index) in formData.musique.value[ceremonie].moments" :key="index">
               <SelectPieceMusique :pieces_musicales="this.formData.musique.value.hommage.pieces_musicales" :name="name" />
             </template>
-          </table>
+          </div>
         </FormKit>
       </div>
   </div>
@@ -53,11 +52,6 @@ export default {
       ceremonie: null,
       musiques: []
     };
-  },
-  methods:{
-    log() {
-      console.log(this);
-    },
   },
   computed: {
     moments() {

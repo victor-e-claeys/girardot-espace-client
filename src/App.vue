@@ -72,7 +72,7 @@ export default {
         <Fleurs :formData="formData" />
       </FormKit>
       <FormKit type="step" name="conclusion" label="Conclusion">
-        <div v-if="formData" v-html="formData.conclusion.value.text" />
+        <div v-if="formData" v-html="formData.conclusion.value.text" class="pb-3" />
         <template #stepNext>
           <FormKit type="submit" />
         </template>

@@ -10,8 +10,8 @@
       />
       <div v-if="traiteur === 'Oui'">
         <div v-if="formData.traiteur.value.intro">{{formData.traiteur.value.intro}}</div>
-        <div class="flex items-end gap-3">
-          <div class="grow">
+        <div class="flex sm:items-end items-start flex-col-reverse sm:flex-row sm:gap-3 pt-3">
+          <div class="flex-1 w-full">
             <FormKit
               v-model="menu"
               name="menu"
@@ -22,7 +22,7 @@
               validation="required"
             />
           </div>
-          <div class="shrink" v-if="formData.traiteur.value.menu">
+          <div v-if="formData.traiteur.value.menu">
             <a target="_blank" :href="formData.traiteur.value.menu">
               <FormKit type="button" prefix-icon="eye">Voir le menu</FormKit>
             </a>
@@ -66,6 +66,7 @@
             name="allergies-specifiees"
             label="Spécifier les allergies"
             rows="4"
+            validation="required"
           />
         </template>
         <FormKit

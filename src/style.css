@@ -9,6 +9,13 @@
   }
   body{
     --multistep-color-success: var(--color-gold);
+    --fk-font-family: 'Century Gothic', sans-serif;
+    --fk-font-family-input: var(--fk-font-family);
+    --fk-font-family-label: var(--fk-font-family);
+    --fk-font-family-legend: var(--fk-font-family);
+    --fk-font-family-option: var(--fk-font-family);
+    --fk-font-family-help: var(--fk-font-family);
+    --fk-font-family-message: var(--fk-font-family);
   }
 }
 
@@ -25,27 +32,42 @@ body::before{
   text-align: left;
 }
 
-.choixSignet .formkit-step-actions{
-  display: none;
+.hide-step-badge .formkit-badge,
+.hide-step-actions .formkit-step-actions{
+  display: none !important;
 }
 
 .reliquaire .formkit-outer{
   --fk-margin-outer: 0;
 }
 
-.reliquaire .formkit-wrapper{
-  color: var(--color-white);
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px;
+.formkit-tabs{
+  flex-wrap: wrap;
+}
+
+[data-tab-style="progress"] > .formkit-tabs{
+  row-gap: 1.5rem;
+}
+
+.formkit-tabs .formkit-tab{
+  min-width:95px;
+}
+
+.formkit-tabs .formkit-tab::after{
+  transform: translateY(-100%);
+}
+
+.qty .formkit-outer{
+  --fk-margin-outer: 0;
+}
+
+.qty .formkit-wrapper{
   --fk-padding-label: 0px;
 }
 
-.reliquaire .formkit-wrapper .formkit-inner{
+.qty .formkit-wrapper .formkit-inner{
   background-color: var(--color-white);
-  max-width: 60px;
+  max-width: 50px;
 }
 
 .piece-preview{
@@ -58,5 +80,6 @@ body::before{
 
 .formkit-options{
   display: flex;
+  flex-wrap: wrap;
   gap:10px;
 }

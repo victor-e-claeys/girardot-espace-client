@@ -12,7 +12,7 @@
       <div v-html="formData?.avis_deces_introduction?.value"></div>
       <FormKit
         type="textarea"
-        name="avis-de-deces"
+        name="avisDeDeces"
         label="Avis de décès"
         :rows="10"
         validation="required"
@@ -28,10 +28,6 @@ export default {
   data() {
     return {
       redaction: null,
-      optionsRedaction: [
-        { label: 'Oui', value: true },
-        { label: 'Non', value: false },
-      ],
     };
   },
   props: {

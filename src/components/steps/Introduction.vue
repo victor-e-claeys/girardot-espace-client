@@ -1,7 +1,7 @@
 <template>
-  <div class="form-step flex gap-6">
-    <div class="w-1/2 pl-4" v-html="formData?.introduction?.value?.text"></div>
-    <div class="w-1/2">
+  <div class="form-step grid sm:grid-cols-2 gap-4">
+    <div v-html="formData?.introduction?.value?.text"></div>
+    <div>
       <div v-html="formData?.info?.value"></div>
       <FormKit
         type="text"

@@ -30,13 +30,13 @@
         validation="required"
       />
       <div v-html="formData.fleurs.value.opt_fleurs_texte_select" />
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid sm:grid-cols-3 gap-3 pt-3">
         <a class="flex flex-col items-center justify-center" v-for="(fleuriste, index) in formData.fleurs.value.opt_catalogue_fleurs.fleuristes" :key="index" :href="fleuriste.fichier" target="_blank">
           <img :src="fleuriste.exemple" />
-          <FormKit type="button" prefix-icon="eye">Voir le catalogue de {{fleuriste.nom}}</FormKit>
+          <FormKit type="button" prefix-icon="eye">Catalogue</FormKit>
         </a>
       </div>
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid sm:grid-cols-2 gap-3">
         <FormKit
           name="fleuriste"
           type="select"
@@ -47,8 +47,8 @@
         />
         <FormKit
           type="text"
-          name="codeBouquet"
-          label="Code du bouquet"
+          name="code"
+          label="Code de l’arrangement floral"
           placeholder="FP1-01"
           validation="required"
         />
@@ -66,6 +66,12 @@ export default {
       ajouterFleurs: null,
       choixFait: null
     };
+  },
+  props: {
+    formData: {
+      type: Object,
+      required: true,
+    },
   },
 };
 </script>

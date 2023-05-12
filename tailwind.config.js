@@ -7,9 +7,11 @@ module.exports = {
     './src/**/*.{html,js,vue}'
   ],
   theme: {
-    colors: {
-      'white': '#ffffff',
-      'gold': '#a98350'
+    extend:{
+      colors: {
+        'white': '#ffffff',
+        'gold': '#a98350'
+      }
     }
   },
   plugins: [formKitTailwind],

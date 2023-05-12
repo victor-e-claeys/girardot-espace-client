@@ -4,16 +4,25 @@
 </script>
 
 <template>
-  <div class="form-step" @click="log">
+  <div class="form-step">
     <FormKit
       v-model="choixFait"
-      name="choix-fait-avec-conseiller"
+      name="choixFait"
       type="radio"
       label="Est-ce que le choix des signets a été complété avec un conseiller?"
       :options="['Oui', 'Non']"
       validation="required"
     />
-    <div class="choixSignet" v-if="choixFait === 'Non'">
+    <FormKit
+      v-if="choixFait === 'Non'"
+      v-model="signetsDesires"
+      name="signetsDesires"
+      type="radio"
+      label="Désirez-vous faire finir des signets en souvenir du défunt?"
+      :options="['Oui', 'Non']"
+      validation="required"
+    />
+    <div class="hide-step-actions" v-if="choixFait === 'Non' && signetsDesires === 'Oui'">
       <FormKit type="multi-step" tab-style="tab">
         <FormKit type="step" label="Format">
           <FormKit
@@ -27,19 +36,19 @@
             }"
             validation="required"
           />
-          <div class="flex items-end gap-3">
-            <div class="grow">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
+            <div class="flex-1">
               <FormKit
                 v-model="format"
                 name="format"
                 type="select"
-                label="Format du signet"
-                placeholder="Faire une sélection"
+                label="Format des signets"
+                placeholder="Choisir le format"
                 :options="formats"
                 validation="required"
               />
             </div>
-            <div class="shrink" v-if="format">
+            <div v-if="format">
               <FormKit type="button" prefix-icon="eye" @click="viewFormat = !viewFormat">Prévisualiser</FormKit>
               <FsLightbox
                 :toggler="viewFormat"
@@ -52,13 +61,13 @@
           </div>
         </FormKit>
         <FormKit type="step" label="Images">
-          <div class="flex items-end gap-3">
-            <div class="grow">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
+            <div class="flex-1">
               <FormKit
                 v-model="bgSource"
-                name="image-source"
+                name="imageFondSource"
                 type="select"
-                label="Choisir une image de fond"
+                label="Image de fond"
                 placeholder="Choisir la source de l'image"
                 :options="{
                   Catalogue: 'Choisir une image à partir de notre catalogue',
@@ -67,7 +76,7 @@
                 validation="required"
               />
             </div>
-            <a v-if="bgSource === 'Catalogue'" :href="formData.signets.value.image_de_fond.catalogue_signet.link_url" target="_target">
+            <a class="self-start sm:self-end" v-if="bgSource === 'Catalogue'" :href="formData.signets.value.image_de_fond.catalogue_signet.link_url" target="_target">
               <FormKit type="button" prefix-icon="eye">Catalogue</FormKit>
             </a>
             <FormKit
@@ -75,27 +84,35 @@
               type="text"
               label="Code Image"
               placeholder="A-1"
-              name="image-fond-catalogue"
+              name="imageFondCatalogue"
               validation="required"
             />
             <FormKit
               v-if="bgSource === 'Custom'"
               type="file"
-              label="Image de fond"
-              name="image-fond-personalisee"
-              accept=".jpg,.png,.pdf"
+              label="Téléverser"
+              name="imageFondPersonnalisee"
+              accept=".jpg,.png"
               validation="required"
             />
           </div>
           <FormKit
+            v-model="photoDefuntRemise"
+            type="radio"
+            label="Avez-vous déjà remis la photo désirée à votre conseiller aux familles pour le montage des signets?"
+            name="photoDefuntRemise"
+            :options="['Oui', 'Non']"
+          />
+          <FormKit
+            v-if="photoDefuntRemise === 'Non'"
             type="file"
             label="Photo de l'être cher"
-            name="photo-defunt"
-            accept=".jpg,.png,.pdf"
+            name="photoDefunt"
+            accept=".jpg,.png"
             validation="required"
           />
         </FormKit>
-        <FormKit type="step" label="Hommage">
+        <FormKit type="step" label="Présentation">
           <FormKit
             v-model="formuleHommage"
             type="radio"
@@ -107,46 +124,50 @@
               'En souvenir de ': 'En souvenir de'
             }"
           />
-          <div class="grid grid-flow-col gap-3 justify-stretch">
+          <div class="grid sm:grid-flow-col gap-x-3 items-end justify-stretch">
             <FormKit
               type="text"
               v-model="nom"
-              name="nom-signet"
+              name="nomSignet"
               label="Nom à afficher sur le signet"
               validation="required"
             />
             <FormKit
               v-model="birthday"
               type="date"
-              name="date-deces"
+              name="dateDeces"
               label="Date de naissance"
               validation="required"
             />
             <FormKit
               v-model="dod"
               type="date"
-              name="date-naissance"
+              name="dateNaissance"
               label="Date de décès"
               validation="required"
             />
           </div>
           <FormKit
-            label="Text de présentation"
+            v-model="textePresentation"
+            label="Texte de présentation"
             type="select"
-            name="texte-presentation"
+            name="textePresentation"
+            placeholder="Choisir un texte de présentation"
             :options="optionsTypeTexte"
             validation="required"
           />
+          <div v-if="textePresentation" class="bg-stone-200 p-3">{{textePresentation}}</div>
         </FormKit>
         <template v-for="face in faces" :key="face">
           <FormKit type="step" :label="`Texte ${face}`">
-              <div class="flex items-end gap-3">
-                <div class="grow">
+              <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
+                <div class="flex-1">
                   <FormKit
                     v-model="sourcesTextes[face]"
                     :name="`sourceTexte[${face}]`"
                     type="select"
                     label="Choisir un texte"
+                    placeholder="Choisir la source du texte"
                     :options="{
                       Catalogue: 'Choisir un texte à partir de notre catalogue',
                       Custom: 'Écrire un texte'
@@ -154,28 +175,21 @@
                     validation="required"
                   />
                 </div>
-                <a v-if="sourcesTextes[face] === 'Catalogue'" :href="formData.signets.value.opt_choix_des_textes.catalogue_pensees.link_url" target="_target">
+                <a class="self-start sm:self-end" v-if="sourcesTextes[face] === 'Catalogue'" :href="formData.signets.value.opt_choix_des_textes.catalogue_pensees.link_url" target="_target">
                   <FormKit type="button" prefix-icon="eye">Catalogue</FormKit>
                 </a>
               </div>
-              <div class="flex gap-3" v-if="sourcesTextes[face] === 'Catalogue'">
+              <div v-if="sourcesTextes[face] === 'Catalogue'">
                 <FormKit
-                  :name="`typeTexte[${face}]`"
+                  v-model="choixTexte[face]"
+                  :name="`choixTexte[${face}]`"
                   type="select"
-                  label="Source du texte"
-                  :options="[
-                    'Pensées',
-                    'Prières',
-                    'Remerciements'
-                  ]"
+                  label="Texte du catalogue"
                   validation="required"
+                  placeholder="Choisir un texte"
+                  :options="optionsTexte"
                 />
-                <FormKit
-                  :name="`numeroTexte[${face}]`"
-                  type="text"
-                  label="Numéro du texte"
-                  validation="required"
-                />
+                <div v-if="choixTexte[face]" class="bg-stone-200 p-3 whitespace-pre-wrap">{{choixTexte[face]}}</div>
               </div>
               <FormKit
                 v-if="sourcesTextes[face] === 'Custom'"
@@ -232,24 +246,25 @@ export default {
       bgSource: null,
       birthday: null,
       choixFait: null,
+      choixTexte: {},
       dod: null,
       format: null,
       formuleHommage: '',
       impression: null,
       nom: '',
+      photoDefuntRemise: null,
       qualites: [],
+      signetsDesires: null,
       signatures: [],
       sourcesTextes:{
         Recto: null,
         Verso: null
       },
+      textePresentation: null,
       viewFormat: false
     };
   },
   methods:{
-    log() {
-      console.log(this);
-    },
     getMoment(data){
       return moment(data);
     }
@@ -267,7 +282,7 @@ export default {
     faces(){
       switch (this.impression) {
         case 'RectoVerso':
-          return ['Recto', 'Verso'];
+          return ['Recto', 'Verso 1', 'Verso 2'];
         case 'Recto':
           return ['Recto'];
         default:
@@ -285,8 +300,12 @@ export default {
       const {birthday, dod, nom, formuleHommage} = this;
       options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'} décédé le ${dod ? moment(dod).format('Do MMMM YYYY') : '{Date de décès}'} à l'âge de ${dod && birthday ? moment.duration(moment(dod).diff(birthday)).years() : '{Âge}'} ans`);
       options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'} ${birthday ? moment(birthday).format('YYYY') : '{Année de naissance}'} - ${dod ? moment(dod).format('YYYY') : '{Année de décès}'}`);
-      options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'}`);
       return options;
+    },
+    optionsTexte(){
+      return this.formData.signets.value.opt_choix_des_textes.catalogue_pensees.textes_catalogue.map(({categorie, textes}) => {
+        return textes.map(({texte}, index) => `${categorie} #${index + 1} - ${texte}`);
+      }).flat();
     }
   },
   watch:{

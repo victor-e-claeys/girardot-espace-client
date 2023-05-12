@@ -6,20 +6,20 @@
 
 <template>
   <FormKit type="group" name="piece" v-model="piece">
-    <tr>
-      <td>{{name}}</td>
-      <td>
-        <div class="flex items-end gap-3">
-          <div class="grow">
+    <div class="sm:table-row">
+      <div class="sm:table-cell font-bold sm:font-normal align-top">{{name}}</div>
+      <div class="sm:table-cell">
+        <div class="flex sm:items-end gap-x-3 flex-col sm:flex-row">
+          <div class="sm:flex-1">
             <FormKit
               type="select"
-              placeholder="Faites une sélection"
+              placeholder="Faites une sélection musicale"
               name="choix"
               :options="pieces"
               validation="required"
             />
           </div>
-          <div class="shrink" v-if="piece.choix && piece.choix !== 'custom'">
+          <div class="w-fit" v-if="piece.choix && piece.choix !== 'custom'">
             <FormKit type="button" prefix-icon="eye" @click="togglePreview = !togglePreview">Prévisualiser</FormKit>
             <FsLightbox
               :toggler="togglePreview"
@@ -50,8 +50,8 @@
           />
         </div>
         
-      </td>
-    </tr>
+      </div>
+    </div>
   </FormKit>
 </template>
 

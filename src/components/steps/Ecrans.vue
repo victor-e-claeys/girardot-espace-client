@@ -3,7 +3,7 @@
     <FormKit 
       type="radio"
       :label="formData.ecrans.value.question"
-      name="tableaux"
+      name="ecrans"
       :options="['Oui', 'Non merci']"
       validation="required" 
     />

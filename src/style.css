@@ -83,3 +83,7 @@ body::before{
   flex-wrap: wrap;
   gap:10px;
 }
+
+.cart{
+  z-index: 1000;
+}

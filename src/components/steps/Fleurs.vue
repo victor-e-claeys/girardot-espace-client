@@ -25,6 +25,7 @@
     <template v-if="ajouterFleurs === 'Oui'">
       <FormKit
         type="radio"
+        name="accompagner"
         :label="formData.fleurs.value.question_3"
         :options="['Une urne', 'Un cercueil']"
         validation="required"

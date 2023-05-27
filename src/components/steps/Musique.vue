@@ -20,14 +20,15 @@
       <div v-if="ceremonie">
         <div>
         {{
-          this.ceremonie === 'eglise' 
-          ? this.formData?.musique?.value?.chapelle_copy?.short_text 
-          : this.formData?.musique?.value[this.ceremonie]?.short_text
+          ceremonie === 'eglise' 
+          ? formData?.musique?.value?.chapelle_copy?.short_text 
+          : formData?.musique?.value[ceremonie]?.short_text
         }}
         </div>
         <FormKit
           v-if="formData.musique.value[ceremonie] && formData.musique.value[ceremonie].moments"
           v-model="musiques"
+          name="selection"
           type="list"
         >
           <div class="border-separate sm:border-spacing-3 sm:table pt-3 sm:pt-0">
@@ -36,7 +37,7 @@
               <div class="table-cell">Pièce Musicale</div>
             </div>
             <template v-for="({name}, index) in formData.musique.value[ceremonie].moments" :key="index">
-              <SelectPieceMusique :pieces_musicales="this.formData.musique.value.hommage.pieces_musicales" :name="name" />
+              <SelectPieceMusique :pieces_musicales="formData.musique.value.hommage.pieces_musicales" :name="name" />
             </template>
           </div>
         </FormKit>

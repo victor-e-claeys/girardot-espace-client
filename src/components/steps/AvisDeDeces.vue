@@ -12,7 +12,7 @@
       <div v-html="formData?.avis_deces_introduction?.value"></div>
       <FormKit
         type="textarea"
-        name="avisDeDeces"
+        name="texte"
         label="Avis de décès"
         :rows="10"
         validation="required"

@@ -23,11 +23,11 @@
       validation="required"
     />
     <div class="hide-step-actions" v-if="choixFait === 'Non' && signetsDesires === 'Oui'">
-      <FormKit type="multi-step" tab-style="tab">
-        <FormKit type="step" label="Format">
+      <FormKit name="selection" type="multi-step" tab-style="tab">
+        <FormKit name="format" type="step" label="Format">
           <FormKit
             v-model="impression"
-            name="recto-verso"
+            name="rectoVerso"
             type="radio"
             label="Impression"
             :options="{
@@ -40,7 +40,7 @@
             <div class="flex-1">
               <FormKit
                 v-model="format"
-                name="format"
+                name="choix"
                 type="select"
                 label="Format des signets"
                 placeholder="Choisir le format"
@@ -60,7 +60,7 @@
             </div>
           </div>
         </FormKit>
-        <FormKit type="step" label="Images">
+        <FormKit name="images" type="step" label="Images">
           <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
             <div class="flex-1">
               <FormKit
@@ -112,12 +112,12 @@
             validation="required"
           />
         </FormKit>
-        <FormKit type="step" label="Présentation">
+        <FormKit name="presentation" type="step" label="Présentation">
           <FormKit
             v-model="formuleHommage"
             type="radio"
             label="Formule d'hommage"
-            name="texte-presentation"
+            name="texteHommage"
             :options="{
               '': 'Aucune',
               'À la douce mémoire de ': 'À la douce mémoire de',
@@ -159,77 +159,81 @@
           <div v-if="textePresentation" class="bg-stone-200 p-3">{{textePresentation}}</div>
         </FormKit>
         <template v-for="face in faces" :key="face">
-          <FormKit type="step" :label="`Texte ${face}`">
-              <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
-                <div class="flex-1">
-                  <FormKit
-                    v-model="sourcesTextes[face]"
-                    :name="`sourceTexte[${face}]`"
-                    type="select"
-                    label="Choisir un texte"
-                    placeholder="Choisir la source du texte"
-                    :options="{
-                      Catalogue: 'Choisir un texte à partir de notre catalogue',
-                      Custom: 'Écrire un texte'
-                    }"
-                    validation="required"
-                  />
-                </div>
-                <a class="self-start sm:self-end" v-if="sourcesTextes[face] === 'Catalogue'" :href="formData.signets.value.opt_choix_des_textes.catalogue_pensees.link_url" target="_target">
-                  <FormKit type="button" prefix-icon="eye">Catalogue</FormKit>
-                </a>
-              </div>
-              <div v-if="sourcesTextes[face] === 'Catalogue'">
+          <FormKit :name="face" type="step" :label="`Texte ${face}`">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3">
+              <div class="flex-1">
                 <FormKit
-                  v-model="choixTexte[face]"
-                  :name="`choixTexte[${face}]`"
+                  v-model="sourcesTextes[face]"
+                  name="sourceTexte"
                   type="select"
-                  label="Texte du catalogue"
+                  label="Choisir un texte"
+                  placeholder="Choisir la source du texte"
+                  :options="{
+                    Catalogue: 'Choisir un texte à partir de notre catalogue',
+                    Custom: 'Écrire un texte'
+                  }"
                   validation="required"
-                  placeholder="Choisir un texte"
-                  :options="optionsTexte"
                 />
-                <div v-if="choixTexte[face]" class="bg-stone-200 p-3 whitespace-pre-wrap">{{choixTexte[face]}}</div>
               </div>
+              <a class="self-start sm:self-end" v-if="sourcesTextes[face] === 'Catalogue'" :href="formData.signets.value.opt_choix_des_textes.catalogue_pensees.link_url" target="_target">
+                <FormKit type="button" prefix-icon="eye">Catalogue</FormKit>
+              </a>
+            </div>
+            <div v-if="sourcesTextes[face] === 'Catalogue'">
               <FormKit
-                v-if="sourcesTextes[face] === 'Custom'"
-                :name="`texte[${face}]`"
-                type="text"
-                label="Votre texte"
+                v-model="choixTexte[face]"
+                name="choixTexte"
+                type="select"
+                label="Texte du catalogue"
                 validation="required"
+                placeholder="Choisir un texte"
+                :options="optionsTexte"
               />
+            </div>
+            <FormKit
+              v-model="texteCustom[face]"
+              v-if="sourcesTextes[face] === 'Custom'"
+              rows="4"
+              name="texte"
+              type="textarea"
+              label="Votre texte"
+              validation="required"
+            />
+            <FormKit
+              v-model="ajoutSignature[face]"
+              type="radio"
+              label="Voulez-vous ajoutez une/des signature(s)?"
+              :options="['Oui', 'Non']"
+              validation="required"
+            />
+            <FormKit
+              v-if="ajoutSignature[face] === 'Oui'"
+              v-model="signatures[face]"
+              name="signatures"
+              type="checkbox"
+              label="Cochez la/les signature(s) désirée(s)"
+              :options="[
+                'Sa famille', 
+                'Ses enfants', 
+                'Signer au nom du défunt (Advenant que le texte choisi est comme si le défunt nous parle)', 
+                'Signature personnalisée'
+              ]"
+              validation="required|min:1"
+            />
+            <FormKit
+              v-model="signaturesCustom[face]"
+              v-if="signatureCustom(face)"
+              :name="`signaturePersonnalisee`"
+              type="text"
+              label="Signature personnalisée"
+              validation="required"
+            />
+              <div v-if="signatures[face].length > 0 || sourcesTextes[face] === 'Catalogue' ? choixTexte[face] : texteCustom[face]" class="bg-stone-200 p-3 whitespace-pre-wrap">
+                <p v-if="sourcesTextes[face] === 'Catalogue' ? choixTexte[face] : texteCustom[face]" class="mb-4">{{sourcesTextes[face] === 'Catalogue' ? choixTexte[face] : texteCustom[face]}}</p>
+                <p v-if="signatures[face].length > 0">&mdash;&nbsp;{{signaturesTexte[face]}}</p>
+              </div>
           </FormKit>
         </template>
-        <FormKit type="step" label="Signature">
-          <FormKit
-            v-model="ajoutSignature"
-            type="radio"
-            label="Voulez-vous ajoutez une/des signature(s)?"
-            :options="['Oui', 'Non']"
-            validation="required"
-          />
-          <FormKit
-            v-if="ajoutSignature === 'Oui'"
-            v-model="signatures"
-            name="signatures"
-            type="checkbox"
-            label="Cochez la/les signature(s) désirée(s)"
-            :options="[
-              'Sa famille', 
-              'Ses enfants', 
-              'Signer au nom du défunt (Advenant que le texte choisi est comme si le défunt nous parle)', 
-              'Signature personnalisée'
-            ]"
-            validation="required|min:1"
-          />
-          <FormKit
-            v-if="signatureCustom"
-            :name="`signaturePersonnalisee`"
-            type="text"
-            label="Signature personnalisée"
-            validation="required"
-          />
-        </FormKit>
       </FormKit>
       <div class="p-4" v-html="formData.signets.value.opt_signet_instruction" />
     </div>
@@ -242,11 +246,17 @@ export default {
   data() {
     return {
       additionalWords: null,
-      ajoutSignature: null,
+      ajoutSignature: {
+        Recto: null,
+        Verso: null
+      },
       bgSource: null,
       birthday: null,
       choixFait: null,
-      choixTexte: {},
+      choixTexte: {
+        Recto: null,
+        Verso: null
+      },
       dod: null,
       format: null,
       formuleHommage: '',
@@ -255,8 +265,19 @@ export default {
       photoDefuntRemise: null,
       qualites: [],
       signetsDesires: null,
-      signatures: [],
+      signatures: {
+        Recto: [],
+        Verso: []
+      },
+      signaturesCustom: {
+        Recto: '',
+        Verso: ''
+      },
       sourcesTextes:{
+        Recto: null,
+        Verso: null
+      },
+      texteCustom: {
         Recto: null,
         Verso: null
       },
@@ -267,7 +288,10 @@ export default {
   methods:{
     getMoment(data){
       return moment(data);
-    }
+    },
+    signatureCustom(face){
+      return this.signatures[face].find(signature => signature === 'Signature personnalisée');
+    },
   },
   computed: {
     formats(){
@@ -282,15 +306,12 @@ export default {
     faces(){
       switch (this.impression) {
         case 'RectoVerso':
-          return ['Recto', 'Verso 1', 'Verso 2'];
+          return ['Recto', 'Verso'];
         case 'Recto':
           return ['Recto'];
         default:
           return [];
       }
-    },
-    signatureCustom(){
-      return this.signatures.find(signature => signature === 'Signature personnalisée');
     },
     imgFormat() {
       return this.formats.find(format => format.value === this.format).image;
@@ -298,7 +319,7 @@ export default {
     optionsTypeTexte(){
       let options = [];
       const {birthday, dod, nom, formuleHommage} = this;
-      options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'} décédé le ${dod ? moment(dod).format('Do MMMM YYYY') : '{Date de décès}'} à l'âge de ${dod && birthday ? moment.duration(moment(dod).diff(birthday)).years() : '{Âge}'} ans`);
+      options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'}. Il/elle nous a quittés le ${dod ? moment(dod).format('Do MMMM YYYY') : '{Date de décès}'} à l'âge de ${dod && birthday ? moment.duration(moment(dod).diff(birthday)).years() : '{Âge}'} ans`);
       options.push(`${formuleHommage}${nom || '{Nom à afficher sur le signet}'} ${birthday ? moment(birthday).format('YYYY') : '{Année de naissance}'} - ${dod ? moment(dod).format('YYYY') : '{Année de décès}'}`);
       return options;
     },
@@ -306,6 +327,20 @@ export default {
       return this.formData.signets.value.opt_choix_des_textes.catalogue_pensees.textes_catalogue.map(({categorie, textes}) => {
         return textes.map(({texte}, index) => `${categorie} #${index + 1} - ${texte}`);
       }).flat();
+    },
+    signaturesTexte(){
+      return Object.entries(this.signatures).reduce((accumulator, [face, selections]) => {
+        accumulator[face] = selections.map(selection => {
+          if(selection.indexOf('défunt') >= 0){
+            return this.nom;
+          }else if (selection == 'Signature personnalisée'){
+            return this.signaturesCustom[face]
+          }else{
+            return selection;
+          }
+        }).join(', ');
+        return accumulator;
+      }, {});
     }
   },
   watch:{

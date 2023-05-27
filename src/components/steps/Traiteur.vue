@@ -2,7 +2,7 @@
   <div class="form-step">
       <FormKit
         v-model="traiteur"
-        name="traiteur"
+        name="offert"
         type="radio"
         label="Voulez-vous offrir un goûter ?"
         :options="['Oui', 'Non']"
@@ -32,9 +32,9 @@
         
         <template v-if="choix_additionnels">
           <div v-for="choix_additionnel in choix_additionnels" :key="choix_additionnel.identifiant">
-            <FormKit type="group" :name="choix_additionnel.identifiant">
+            <FormKit type="group" name="selection">
               {{choix_additionnel.nom}} ({{choix_additionnel.nombre}})
-              <FormKit type="list">
+              <FormKit :name="choix_additionnel.identifiant" type="list">
                 <template v-for="i in parseInt(choix_additionnel.nombre)" :key="i">
                   <FormKit
                     name="choix"
@@ -63,7 +63,7 @@
         <template v-if="allergies === 'Oui'">
           <FormKit
             type="textarea"
-            name="allergies-specifiees"
+            name="allergiesSpecifiees"
             label="Spécifier les allergies"
             rows="4"
             validation="required"

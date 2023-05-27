@@ -6,6 +6,11 @@
 
 <template>
   <FormKit type="group" name="piece" v-model="piece">
+    <FormKit
+      name="moment"
+      type="hidden"
+      :value="name"
+    />
     <div class="sm:table-row">
       <div class="sm:table-cell font-bold sm:font-normal align-top">{{name}}</div>
       <div class="sm:table-cell">

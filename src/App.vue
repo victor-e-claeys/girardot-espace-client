@@ -8,10 +8,6 @@
   import Signets from './components/steps/Signets.vue'
   import Tableaux from './components/steps/Tableaux.vue'
   import Traiteur from './components/steps/Traiteur.vue'
-  async function submit() {
-    await new Promise(r => setTimeout(r, 1000))
-    alert('Submitted! 🎉')
-  }
 </script>
 
 <script>
@@ -26,20 +22,59 @@ export default {
   methods: {
     log() {
       console.log(arguments);
+    },
+    apiURL(action){
+      return 'https://girardot.duboisda.com/wp-admin/admin-ajax.php?action=' + action;
+    },
+    async uploadPicture(file){
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('key', '278674037be7cebbfa16853a31e7a3f5');
+      formData.append('expiration', 2592000); //2592000
+      return fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(({data}) => {
+          return data.url;
+        })
+        .catch(error => {
+          // Handle any errors that occur during the request
+          console.error('Error:', error);
+        });
+    },
+    async submit(formData){
+      const {images} = formData.informations.signets?.selection || {images:{}};
+      console.log(formData);
+      if(images.imageFondSource == 'Custom'){
+        this.data.informations.signets.selection.images.imageFondPersonnalisee[0].url = await this.uploadPicture(images.imageFondPersonnalisee[0].file);
+      }
+      if(images.photoDefuntRemise == 'Non'){
+        this.data.informations.signets.selection.images.photoDefunt[0].url = await this.uploadPicture(images.photoDefunt[0].file);
+      }
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.data)
+      };
+      fetch(this.apiURL('espace_famille_submit'), requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data) );
     }
   },
   created() {
-    fetch('https://girardot.duboisda.com/wp-admin/admin-ajax.php?action=data_espace_famille')
+    fetch(this.apiURL('data_espace_famille'))
       .then(response => response.json())
       .then(({data}) => {
         this.formData = data;
       });
-  },
+  }
 };
 </script>
 
 <template>
-  <FormKit type="form" v-model="data" :actions="false">
+  <FormKit type="form" v-model="data" :actions="false" @submit="submit">
     <FormKit v-if="formData" :classes="{
       wrapper: '!max-w-full',
       steps: '!border-0 !shadow-none'

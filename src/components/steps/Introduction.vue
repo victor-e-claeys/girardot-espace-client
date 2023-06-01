@@ -20,6 +20,7 @@
         name="telephone"
         label="Numéro de téléphone"
         placeholder="### ###-####"
+        help="Utiliser le format indiqué (ex. 555 555-5555)"
         validation="required|matches:/^[0-9]{3} [0-9]{3}-[0-9]{4}$/"
       />
     </div>

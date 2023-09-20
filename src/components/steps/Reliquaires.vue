@@ -7,11 +7,10 @@
 <template>
   <div class="form-step hide-step-actions hide-step-badge">
     <FsLightbox
-      :toggler="lightboxVisible"
+      :toggler="lightboxToggler"
       type="image"
-      :sources="[
-        imagePreview
-      ]"
+      :sources="sources"
+      :source="imagePreview"
     />
     <div v-html="formData.reliquaires.value['opt_reliquaire_intro']" />
     <div v-if="selected && Object.keys(selected).length > 0" class="cart rounded border border-stone-200 border-solid p-3 ml-3 fixed bg-white bottom-3 left-3 w-fit drop-shadow-lg">
@@ -48,7 +47,7 @@
       </div>
     </div>
     <FormKit :ignore="true" type="multi-step" tab-style="tab">
-      <FormKit type="step" :label="categorie.opt_reliquaire_categorie" v-for="(categorie, i) in formData.reliquaires.value['opt_reliquaire_categories']" :key="i">
+      <FormKit type="step" :label="categorie.opt_reliquaire_categorie" v-for="(categorie, i) in formData.reliquaires.value.opt_reliquaire_categories" :key="i">
         <div class="reliquaires-options grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 min-[480px]:grid-cols-2 gap-3">
           <div class="bg-stone-500 flex flex-col relative reliquaire drop-shadow-md" v-for="(reliquaire, index) in categorie.opt_reliquaire_images" :key="index">
             <FormKitIcon 
@@ -78,15 +77,16 @@ export default {
   name: 'Reliquaires',
   data() {
     return {
+      sources: [],
       imagePreview: null,
-      lightboxVisible: false,
+      lightboxToggler: false,
       selected: {}
     };
   },
   methods: {
     viewImage(url){
       this.imagePreview = url;
-      this.lightboxVisible = true;
+      this.lightboxToggler = !this.lightboxToggler;
     },
     hash(item){
       const jsonString = JSON.stringify(item);
@@ -114,5 +114,12 @@ export default {
       required: true,
     },
   },
+  created() {
+    this.sources = this.formData.reliquaires.value.opt_reliquaire_categories.map(categorie => {
+      return categorie.opt_reliquaire_images.map(({image_url}) => {
+        return image_url.url;
+      });
+    }).flat();
+  }
 };
 </script>

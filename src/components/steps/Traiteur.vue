@@ -1,14 +1,23 @@
 <template>
   <div class="form-step">
       <FormKit
-        v-model="traiteur"
-        name="offert"
+        v-model="choixTraiteur"
+        name="choixTraiteurFait"
         type="radio"
-        label="Voulez-vous offrir un goûter ?"
+        label="Avez-vous effectué le choix du traiteur avec un de nos conseillers ?"
         :options="['Oui', 'Non']"
         validation="required"
       />
-      <div v-if="traiteur === 'Oui'">
+      <FormKit
+        v-if="choixTraiteur === 'Non'"
+        v-model="traiteur"
+        name="offert"
+        type="radio"
+        label="Désirez-vous offrir un goûter ?"
+        :options="['Oui', 'Non']"
+        validation="required"
+      />
+      <div v-if="choixTraiteur === 'Non' && traiteur === 'Oui'">
         <div v-if="formData.traiteur.value.intro">{{formData.traiteur.value.intro}}</div>
         <div class="flex sm:items-end items-start flex-col-reverse sm:flex-row sm:gap-3 pt-3">
           <div class="flex-1 w-full">
@@ -92,6 +101,7 @@ export default {
       alcool: null,
       moneyFormatter: null,
       allergies: null,
+      choixTraiteur: null,
       traiteur: null,
       menu: null
     };

@@ -82,7 +82,7 @@ export default {
   computed: {
     pieces() {
       return [
-        {label:'Personnalisée', value:'custom'}
+        {label:'Sélectionnez ceci pour personnaliser votre pièce musicale.', value:'custom'}
       ].concat(
         this.pieces_musicales ? this.pieces_musicales.map(p => {
           return {

@@ -1,6 +1,6 @@
 <script setup>
   import FsLightbox from "fslightbox-vue/v3"
-  import moment from "moment"
+  import moment from 'moment/min/moment-with-locales';
 </script>
 
 <template>
@@ -363,6 +363,9 @@ export default {
       type: String,
       required: true,
     },
+  },
+  created(){
+    moment.locale('fr');
   }
 };
 </script>

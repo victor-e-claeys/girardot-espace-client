@@ -6,7 +6,7 @@
       <FormKit
         type="text"
         name="nomDefunt"
-        label="Nom de l'être cher"
+        label="Nom du défunt"
         validation="required"
       />
       <FormKit

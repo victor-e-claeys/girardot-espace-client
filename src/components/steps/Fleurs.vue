@@ -39,6 +39,7 @@
       </div>
       <div class="grid sm:grid-cols-2 gap-3">
         <FormKit
+          v-model="selectionFleuriste"
           name="fleuriste"
           type="select"
           label="Fleuriste"
@@ -50,7 +51,7 @@
           type="text"
           name="code"
           label="Code de l’arrangement floral"
-          placeholder="FP1-01"
+          :placeholder="selectionFleuriste ? formData.fleurs.value.opt_catalogue_fleurs.fleuristes.find(fleuriste => fleuriste.nom === selectionFleuriste).codeExemple : 'FP1-01'"
           validation="required"
         />
       </div>
@@ -65,8 +66,16 @@ export default {
   data() {
     return {
       ajouterFleurs: null,
-      choixFait: null
+      choixFait: null,
+      selectionFleuriste: null
     };
+  },
+  computed: {
+    placeholderCode(){
+      switch (fleuriste){
+        case ''
+      }
+    }
   },
   props: {
     formData: {

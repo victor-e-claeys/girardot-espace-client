@@ -12,19 +12,20 @@
         placeholder="Faites une sélection"
         :options="{
           eglise: 'Messe de funérailles à l`Église',
-          hommage: 'Court hommage au salon (2 chansons)',
-          chapelle: 'Célébrant en chapelle (3 chansons)'
+          hommage: 'Court hommage au salon avec sélection musicale de 2 pièces',
+          chapelle: 'Célébration en chapelle avec sélection musicale de 3 pièces',
+          musiciensChapelle: 'Célébration en chapelle avec musiciens (Frais supplémentaires)'
         }"
         validation="required"
       />
       <div v-if="ceremonie">
-        <div>
+        <p>
         {{
           ceremonie === 'eglise' 
           ? formData?.musique?.value?.chapelle_copy?.short_text 
           : formData?.musique?.value[ceremonie]?.short_text
         }}
-        </div>
+        </p>
         <FormKit
           v-if="formData.musique.value[ceremonie] && formData.musique.value[ceremonie].moments"
           v-model="musiques"

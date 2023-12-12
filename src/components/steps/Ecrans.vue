@@ -2,12 +2,12 @@
   <div class="form-step">
     <FormKit 
       type="radio"
-      :label="formData.ecrans.value.question"
+      :label="formData?.ecrans?.value.question"
       name="ecrans"
       :options="['Oui', 'Non merci']"
       validation="required" 
     />
-    <div v-html="formData.ecrans.value['text-screen']" />
+    <div v-html="formData?.ecrans?.value['text-screen']" />
   </div>
 </template>
 

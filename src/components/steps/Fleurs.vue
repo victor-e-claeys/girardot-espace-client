@@ -51,8 +51,18 @@
           type="text"
           name="code"
           label="Code de l’arrangement floral"
-          :placeholder="selectionFleuriste ? formData.fleurs.value.opt_catalogue_fleurs.fleuristes.find(fleuriste => fleuriste.nom === selectionFleuriste).codeExemple : 'FP1-01'"
+          :placeholder="'ex. ' + (selectionFleuriste ? formData.fleurs.value.opt_catalogue_fleurs.fleuristes.find(fleuriste => fleuriste.nom === selectionFleuriste).placeholder : 'FP1-01')"
           validation="required"
+        />
+        <FormKit
+          type="textarea"
+          name="instructions"
+          label="Inscrivez un petit mot sur une carte pour accompagner l'arrangement"
+          validation="length:0,120"
+          validation-visibility="live"
+          :validation-messages="{
+            length: 'Pas plus de 120 caractères.',
+          }"
         />
       </div>
     </template>
@@ -69,13 +79,6 @@ export default {
       choixFait: null,
       selectionFleuriste: null
     };
-  },
-  computed: {
-    placeholderCode(){
-      switch (fleuriste){
-        case ''
-      }
-    }
   },
   props: {
     formData: {

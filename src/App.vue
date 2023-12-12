@@ -16,7 +16,8 @@ export default {
   data() {
     return {
       formData: null,
-      data: {}
+      data: {},
+      previewHTML: null
     };
   },
   methods: {
@@ -24,7 +25,10 @@ export default {
       console.log(arguments);
     },
     apiURL(action){
-      return 'https://girardot.duboisda.com/wp-admin/admin-ajax.php?action=' + action;
+      return 'https://girardot.duboisda.com/wp-admin/admin-ajax.php?action=' + action; // + Object.entries(queryArgs).map(([key, value]) =>  '&' + key + '=' + value).join('');
+    },
+    async beforeStepChange({ currentStep, targetStep, delta }){
+      if(targetStep.isLastStep) this.preview();
     },
     async uploadPicture(file){
       const formData = new FormData();
@@ -45,12 +49,19 @@ export default {
         });
     },
     async submit(formData){
+      return this.post({action: 'espace_famille_submit', formData});
+    },
+    async preview(){
+      this.post({action: 'espace_famille_preview', formData: this.data, json: false})
+        .then(html => this.previewHTML = html);
+    },
+    async post({action, formData, queryArgs = {}, json = 1}){
       const {images} = formData.informations.signets?.selection || {images:{}};
       console.log(formData);
-      if(images.imageFondSource == 'Custom'){
+      if(images.imageFondSource == 'Custom' && !this.data.informations.signets.selection.images.imageFondPersonnalisee[0].url){
         this.data.informations.signets.selection.images.imageFondPersonnalisee[0].url = await this.uploadPicture(images.imageFondPersonnalisee[0].file);
       }
-      if(images.photoDefuntRemise == 'Non'){
+      if(images.photoDefuntRemise == 'Non' && !this.data.informations.signets.selection.images.photoDefunt[0].url){
         this.data.informations.signets.selection.images.photoDefunt[0].url = await this.uploadPicture(images.photoDefunt[0].file);
       }
       const requestOptions = {
@@ -58,16 +69,36 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(this.data)
       };
-      fetch(this.apiURL('espace_famille_submit'), requestOptions)
-        .then(response => response.json())
-        .then(data => console.log(data) );
+      return fetch(this.apiURL(action), requestOptions)
+        .then(response => json ? response.json() : response.text())
+    }
+  },
+  watch: {
+    previewHTML: function(newValue) {
+        const iframe = document.getElementById('preview');
+        let doc = iframe.contentWindow || iframe.contentDocument;
+        if (doc.document) {
+            doc = doc.document;
+        }
+        doc.open();
+        doc.write(newValue);
+        doc.close();
     }
   },
   created() {
-    fetch(this.apiURL('data_espace_famille'))
+    fetch(this.apiURL('espace_famille_data'))
       .then(response => response.json())
       .then(({data}) => {
         this.formData = data;
+        this.data = Object.assign(this.data, {
+          informations: {
+            introduction: {
+              nomDefunt: data.user.nomDefunt,
+              nomResponsable: data.user.nomResponsable,
+              telephone: data.user.telephone
+            }
+          }
+        })
       });
   }
 };
@@ -78,9 +109,9 @@ export default {
     <FormKit v-if="formData" :classes="{
       wrapper: '!max-w-full',
       steps: '!border-0 !shadow-none'
-    }" type="multi-step" name="informations" tab-style="progress">
+    }" type="multi-step" name="informations" tab-style="progress" :before-step-change="beforeStepChange">
       <FormKit nextLabel="Commencer" type="step" name="introduction" label="Introduction">
-        <Introduction :formData="formData" /> 
+        <Introduction :loginHTML="loginHTML" :formData="formData" /> 
       </FormKit>
       <FormKit type="step" name="avisDeDeces" label="Avis de décès">
         <AvisDeDeces :formData="formData" />
@@ -110,12 +141,26 @@ export default {
         <template #stepNext>
           <FormKit type="submit" />
         </template>
-        <div v-if="formData" v-html="formData.conclusion.value.text" class="pb-3" />
-        <Conclusion :formData="formData" :data="data" :uploadPicture="uploadPicture" />
+        <div v-html="formData.conclusion.value.text" class="pb-3" />
+        <h3 class="previewTitle">Validez votre sélection:</h3>
+        <iframe id="preview"></iframe>
       </FormKit>
     </FormKit>
   </FormKit>
 </template>
 
 <style scoped>
+  #preview{
+    background-color: white;
+    height: 500px;
+    max-height: 80vh;
+    width: 100%;
+    max-width: 600px;
+    margin:auto;
+  }
+  .previewTitle{
+    font-weight:bold;
+    font-size: 1.5em;
+    text-align: center !important;
+  }
 </style>

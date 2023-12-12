@@ -13,6 +13,7 @@
       :source="imagePreview"
     />
     <div v-html="formData.reliquaires.value['opt_reliquaire_intro']" />
+    <a class="block py-3 shareLink underline text-gold" :href="shareLink" target="_blank">{{ shareLink }}</a>
     <div v-if="selected && Object.keys(selected).length > 0" class="cart rounded border border-stone-200 border-solid p-3 ml-3 fixed bg-white bottom-3 left-3 w-fit drop-shadow-lg">
       <div class="text-lg border-b border-stone-200 border-solid font-bold">Sélection reliquaires</div>
       <div class="max-h-36 overflow-auto flex flex-col gap-3 pt-1.5">
@@ -72,7 +73,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Reliquaires',
   data() {
@@ -82,6 +82,11 @@ export default {
       lightboxToggler: false,
       selected: {}
     };
+  },
+  computed:{
+    shareLink() {
+      return this.formData?.reliquaires.value.page_reliquaires + '?code=' + this.formData?.user.codeReliquaire;
+    }
   },
   methods: {
     viewImage(url){

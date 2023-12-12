@@ -5,6 +5,15 @@
 <template>
   <div class="form-step">
       <FormKit
+        v-model="choixFait"
+        name="choixFait"
+        type="radio"
+        label="Est-ce que le choix du type de cérémonie et de la musique a été complété avec un conseiller?"
+        :options="['Oui', 'Non']"
+        validation="required"
+      />
+      <FormKit
+        v-if="choixFait === 'Non'"
         v-model="ceremonie"
         name="ceremonie"
         type="select"
@@ -51,6 +60,7 @@ export default {
   name: 'Musique',
   data() {
     return {
+      choixFait: null,
       ceremonie: null,
       musiques: []
     };

@@ -87,3 +87,7 @@ body::before{
 .cart{
   z-index: 1000;
 }
+
+#app{
+  display: block !important;
+}

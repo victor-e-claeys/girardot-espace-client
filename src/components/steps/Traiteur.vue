@@ -89,7 +89,7 @@
           }"
           validation="required"
         />
-        <div v-if="alcool === 'Oui'" v-html="formData.traiteur.value.alcohol_permit_text"/></div>
+        <div v-if="alcool === 'Oui'" class="message_alcool" v-html="formData.traiteur.value.alcohol_permit_text"/></div>
   </div>
 </template>
 

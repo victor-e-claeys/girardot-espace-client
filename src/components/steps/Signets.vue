@@ -99,7 +99,7 @@
           <FormKit
             v-model="photoDefuntRemise"
             type="radio"
-            label="Avez-vous déjà remis la photo désirée à votre conseiller aux familles pour le montage des signets?"
+            label="Avez-vous déjà remis la photo du défunt à votre conseiller aux familles pour le montage des signets??"
             name="photoDefuntRemise"
             :options="['Oui', 'Non']"
           />
